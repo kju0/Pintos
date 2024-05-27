@@ -70,7 +70,8 @@ timer_calibrate (void) {
 	printf ("%'"PRIu64" loops/s.\n", (uint64_t) loops_per_tick * TIMER_FREQ);
 }
 
-/* Returns the number of timer ticks since the OS booted. */
+/* OS가 부팅되고 난 후부터 지금까지의 timer ticks를 반환합니다. 
+ * Returns the number of timer ticks since the OS booted. */
 int64_t
 timer_ticks (void) {
 	enum intr_level old_level = intr_disable ();
@@ -80,14 +81,18 @@ timer_ticks (void) {
 	return t;
 }
 
-/* Returns the number of timer ticks elapsed since THEN, which
-   should be a value once returned by timer_ticks(). */
+
+/* 파라미터 then 이후 경과된 timer ticks의 수를 리턴합니다.
+ * 여기서 then은 timer_ticks의 리턴값이어야 합니다.
+ * Returns the number of timer ticks elapsed since THEN, which
+ * should be a value once returned by timer_ticks(). */
 int64_t
 timer_elapsed (int64_t then) {
 	return timer_ticks () - then;
 }
 
-/* Suspends execution for approximately TICKS timer ticks. */
+/* 약 TICKS 타이머 틱 동안 실행을 일시 중지합니다. 
+ * Suspends execution for approximately TICKS timer ticks. */
 void
 timer_sleep (int64_t ticks) {
 	int64_t start = timer_ticks ();
@@ -120,7 +125,7 @@ void
 timer_print_stats (void) {
 	printf ("Timer: %"PRId64" ticks\n", timer_ticks ());
 }
-
+
 /* Timer interrupt handler. */
 static void
 timer_interrupt (struct intr_frame *args UNUSED) {
@@ -146,13 +151,18 @@ too_many_loops (unsigned loops) {
 	return start != ticks;
 }
 
-/* Iterates through a simple loop LOOPS times, for implementing
-   brief delays.
+/* 다음은 간단한 루프를 LOOPS 횟수만큼 반복하여 짧은 지연을 구현하는 코드입니다.
+ * 
+ * 이 함수는 NO_INLINE으로 표시되었습니다. 
+ * 코드 정렬은 타이밍에 상당한 영향을 미칠 수 있기 때문입니다.
+ * 다양한 위치에서 이 함수가 다르게 인라인 처리될 경우 결과를 예측하기 어려울 수 있습니다.
+ * Iterates through a simple loop LOOPS times, for implementing
+ * brief delays.
 
-   Marked NO_INLINE because code alignment can significantly
-   affect timings, so that if this function was inlined
-   differently in different places the results would be difficult
-   to predict. */
+ * Marked NO_INLINE because code alignment can significantly
+ * affect timings, so that if this function was inlined
+ * differently in different places the results would be difficult
+ * to predict. */
 static void NO_INLINE
 busy_wait (int64_t loops) {
 	while (loops-- > 0)

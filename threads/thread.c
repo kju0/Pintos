@@ -292,8 +292,10 @@ thread_exit (void) {
 	NOT_REACHED ();
 }
 
-/* Yields the CPU.  The current thread is not put to sleep and
-   may be scheduled again immediately at the scheduler's whim. */
+/* CPU를 양보합니다.(running -> ready)
+ * 현재 스레드는 잠들지 않으며 스케줄러의 판단에 따라 즉시 다시 스케줄될 수 있습니다.
+ * Yields the CPU.  The current thread is not put to sleep and
+ * may be scheduled again immediately at the scheduler's whim. */
 void
 thread_yield (void) {
 	struct thread *curr = thread_current ();
